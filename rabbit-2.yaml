@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rbsend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rbsend-app
+  template:
+    metadata:
+      labels:
+        app: rbsend-app
+    spec:
+      containers:
+      - name: rbsend-container
+        image: rbsend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rbsend-service
+spec:
+  type: NodePort
+  selector:
+    app: rbsend-app
+  ports:
+  - name: rbsend-service
+    protocol: TCP
+    port: 80
+    targetPort: 3000

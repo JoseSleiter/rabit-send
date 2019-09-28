@@ -4,6 +4,43 @@ const Producto = require('../models/producto.module');
 const ObjectID = require('mongodb').ObjectID;   
 
 class ProductoController{
+    static async receive(req, res){
+        var amqp = require('amqplib/callback_api');
+
+        amqp.connect('amqp://localhost', function(error0, connection) {
+            if (error0) {
+                throw error0;
+            }
+            connection.createChannel(function(error1, channel) {
+                if (error1) {
+                    throw error1;
+                }
+        
+                var queue = 'hello';
+        
+                channel.assertQueue(queue, {
+                    durable: false
+                });
+        
+                console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
+        
+                channel.consume(queue, function(msg) {
+                    console.log(" [x] Received %s", msg.content.toString());
+                }, {
+                    noAck: true
+                });
+            });
+        });
+
+        res.status(200).json(
+            {
+                data: "todo bien, es un test",
+                port_MONGO: process.env.MONGO_SERVICE_PORT,
+                host_MONGO: process.env.MONGO_SERVICE_HOST,
+                url_MONGO: process.env.DATABASE_URL
+            }
+        )
+    }   
 
     static async test(req, res){
         res.status(200).json(
