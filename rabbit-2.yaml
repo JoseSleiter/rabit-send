@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: rbsend-container
-        image: rbsend:latest
+        image: josesleiter/rabit-send:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 3000
